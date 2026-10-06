@@ -1,0 +1,1150 @@
+[
+ {
+  "id": "cs-000",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 0,
+  "w": 2400,
+  "h": 1600,
+  "takenAt": "2026-09-20T18:00:00",
+  "palette": [
+   "#f7a145",
+   "#be2d68",
+   "#c92121"
+  ],
+  "avg": "#42242c",
+  "clean": true
+ },
+ {
+  "id": "cs-001",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 1,
+  "w": 1200,
+  "h": 1600,
+  "takenAt": "2026-09-20T18:00:58",
+  "palette": [
+   "#8259e4",
+   "#c62e83",
+   "#be2da3"
+  ],
+  "avg": "#40263d",
+  "clean": false
+ },
+ {
+  "id": "cs-003",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 3,
+  "w": 1200,
+  "h": 1600,
+  "takenAt": "2026-09-20T18:02:54",
+  "palette": [
+   "#4d60ef",
+   "#2d53be",
+   "#be2d48"
+  ],
+  "avg": "#2a2a39",
+  "clean": false
+ },
+ {
+  "id": "cs-005",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 5,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T18:04:50",
+  "palette": [
+   "#9462da",
+   "#bb2dbe",
+   "#2d8cbe"
+  ],
+  "avg": "#37273f",
+  "clean": false
+ },
+ {
+  "id": "cs-007",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 7,
+  "w": 1200,
+  "h": 1600,
+  "takenAt": "2026-09-20T18:06:46",
+  "palette": [
+   "#6e7c7b",
+   "#9da09f",
+   "#9da09f"
+  ],
+  "avg": "#323434",
+  "clean": false
+ },
+ {
+  "id": "cs-009",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 9,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T18:08:42",
+  "palette": [
+   "#5a55d7",
+   "#0d61de",
+   "#f7da34"
+  ],
+  "avg": "#2a283e",
+  "clean": true
+ },
+ {
+  "id": "cs-011",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 11,
+  "w": 1200,
+  "h": 1600,
+  "takenAt": "2026-09-20T18:10:38",
+  "palette": [
+   "#c32832",
+   "#6289da",
+   "#be2d7d"
+  ],
+  "avg": "#3a2c37",
+  "clean": false
+ },
+ {
+  "id": "cs-013",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 13,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T18:12:34",
+  "palette": [
+   "#dc0f26",
+   "#502dbe",
+   "#6860dc"
+  ],
+  "avg": "#3f273c",
+  "clean": false
+ },
+ {
+  "id": "cs-015",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 15,
+  "w": 1200,
+  "h": 1600,
+  "takenAt": "2026-09-20T18:14:30",
+  "palette": [
+   "#432dbe",
+   "#da62aa",
+   "#b62dbe"
+  ],
+  "avg": "#372b3b",
+  "clean": false
+ },
+ {
+  "id": "cs-017",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 17,
+  "w": 1200,
+  "h": 1600,
+  "takenAt": "2026-09-20T18:16:26",
+  "palette": [
+   "#be2d89",
+   "#602dbe",
+   "#0f3edc"
+  ],
+  "avg": "#38273f",
+  "clean": false
+ },
+ {
+  "id": "cs-019",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 19,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T18:18:22",
+  "palette": [
+   "#be2db9",
+   "#be2db6",
+   "#e10962"
+  ],
+  "avg": "#3c2343",
+  "clean": false
+ },
+ {
+  "id": "cs-021",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 21,
+  "w": 1200,
+  "h": 1600,
+  "takenAt": "2026-09-20T18:20:18",
+  "palette": [
+   "#7b61db",
+   "#f7df45",
+   "#be2d6d"
+  ],
+  "avg": "#372e38",
+  "clean": true
+ },
+ {
+  "id": "cs-023",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 23,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T18:22:14",
+  "palette": [
+   "#5a57d8",
+   "#322dbe",
+   "#be2dbc"
+  ],
+  "avg": "#2c2640",
+  "clean": true
+ },
+ {
+  "id": "cs-025",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 25,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T18:24:10",
+  "palette": [
+   "#0944e1",
+   "#da62c3",
+   "#be2d9c"
+  ],
+  "avg": "#342640",
+  "clean": true
+ },
+ {
+  "id": "cs-027",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 27,
+  "w": 1067,
+  "h": 1600,
+  "takenAt": "2026-09-20T18:26:06",
+  "palette": [
+   "#da1083",
+   "#a52dbe",
+   "#d6e458"
+  ],
+  "avg": "#362d39",
+  "clean": false
+ },
+ {
+  "id": "cs-028",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 28,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T18:27:04",
+  "palette": [
+   "#d1194b",
+   "#dac962",
+   "#2d35be"
+  ],
+  "avg": "#362c3a",
+  "clean": false
+ },
+ {
+  "id": "cs-029",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 29,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T18:28:02",
+  "palette": [
+   "#be2d61",
+   "#da627b",
+   "#be2d9c"
+  ],
+  "avg": "#402630",
+  "clean": false
+ },
+ {
+  "id": "cs-030",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 30,
+  "w": 1200,
+  "h": 1600,
+  "takenAt": "2026-09-20T18:29:00",
+  "palette": [
+   "#985ae2",
+   "#e1095d",
+   "#5d2dbe"
+  ],
+  "avg": "#3d2145",
+  "clean": false
+ },
+ {
+  "id": "cs-031",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 31,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T18:29:58",
+  "palette": [
+   "#6d53e9",
+   "#be2d8e",
+   "#492dbe"
+  ],
+  "avg": "#362343",
+  "clean": false
+ },
+ {
+  "id": "cs-032",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 32,
+  "w": 1067,
+  "h": 1600,
+  "takenAt": "2026-09-20T18:30:56",
+  "palette": [
+   "#a362da",
+   "#7057e5",
+   "#be2d88"
+  ],
+  "avg": "#382b3b",
+  "clean": true
+ },
+ {
+  "id": "cs-033",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 33,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T18:31:54",
+  "palette": [
+   "#e359d2",
+   "#be2da1",
+   "#cf3468"
+  ],
+  "avg": "#42243f",
+  "clean": false
+ },
+ {
+  "id": "cs-035",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 35,
+  "w": 1067,
+  "h": 1600,
+  "takenAt": "2026-09-20T18:33:50",
+  "palette": [
+   "#5845f7",
+   "#5b2dbe",
+   "#462fc7"
+  ],
+  "avg": "#292640",
+  "clean": false
+ },
+ {
+  "id": "cs-037",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 37,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T18:35:46",
+  "palette": [
+   "#be2d58",
+   "#d34249",
+   "#394ad1"
+  ],
+  "avg": "#3d2934",
+  "clean": false
+ },
+ {
+  "id": "cs-039",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 39,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T18:37:42",
+  "palette": [
+   "#2d48be",
+   "#5c2dbe",
+   "#2e41c6"
+  ],
+  "avg": "#1b1929",
+  "clean": false
+ },
+ {
+  "id": "cs-040",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 40,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T18:38:40",
+  "palette": [
+   "#c9224f",
+   "#992dbe",
+   "#da6271"
+  ],
+  "avg": "#2f1b26",
+  "clean": false
+ },
+ {
+  "id": "cs-041",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 41,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T18:39:38",
+  "palette": [
+   "#e41e3f",
+   "#2048cb",
+   "#edd24f"
+  ],
+  "avg": "#41253b",
+  "clean": false
+ },
+ {
+  "id": "cs-043",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 43,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T18:41:34",
+  "palette": [
+   "#514fd6",
+   "#d94d59",
+   "#332dbe"
+  ],
+  "avg": "#35283e",
+  "clean": false
+ },
+ {
+  "id": "cs-045",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 45,
+  "w": 1067,
+  "h": 1600,
+  "takenAt": "2026-09-20T18:43:30",
+  "palette": [
+   "#9d62da",
+   "#a32dbe",
+   "#f6b232"
+  ],
+  "avg": "#3b2b3b",
+  "clean": true
+ },
+ {
+  "id": "cs-047",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 47,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T18:45:26",
+  "palette": [
+   "#5e5fde",
+   "#d81230",
+   "#244dc7"
+  ],
+  "avg": "#34283e",
+  "clean": false
+ },
+ {
+  "id": "cs-049",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 49,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T18:47:22",
+  "palette": [
+   "#f76e45",
+   "#be2d4f",
+   "#742dbe"
+  ],
+  "avg": "#41252c",
+  "clean": false
+ },
+ {
+  "id": "cs-051",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 51,
+  "w": 1067,
+  "h": 1600,
+  "takenAt": "2026-09-20T18:49:18",
+  "palette": [
+   "#8f2dbe",
+   "#be2da8",
+   "#8d35d0"
+  ],
+  "avg": "#372c3a",
+  "clean": false
+ },
+ {
+  "id": "cs-053",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 53,
+  "w": 1067,
+  "h": 1600,
+  "takenAt": "2026-09-20T18:51:14",
+  "palette": [
+   "#332dbe",
+   "#be2d5c",
+   "#a062da"
+  ],
+  "avg": "#36273f",
+  "clean": false
+ },
+ {
+  "id": "cs-055",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 55,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T18:53:10",
+  "palette": [
+   "#da4fee",
+   "#f74599",
+   "#be2da7"
+  ],
+  "avg": "#40263c",
+  "clean": false
+ },
+ {
+  "id": "cs-057",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 57,
+  "w": 1200,
+  "h": 1600,
+  "takenAt": "2026-09-20T18:55:06",
+  "palette": [
+   "#e10915",
+   "#e6d156",
+   "#7562da"
+  ],
+  "avg": "#382e36",
+  "clean": false
+ },
+ {
+  "id": "cs-059",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 59,
+  "w": 1200,
+  "h": 1600,
+  "takenAt": "2026-09-20T18:57:02",
+  "palette": [
+   "#9762da",
+   "#6846d4",
+   "#2d51be"
+  ],
+  "avg": "#2c293d",
+  "clean": false
+ },
+ {
+  "id": "cs-061",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 61,
+  "w": 1200,
+  "h": 1600,
+  "takenAt": "2026-09-20T18:58:58",
+  "palette": [
+   "#7552ea",
+   "#be2d7b",
+   "#a02dbe"
+  ],
+  "avg": "#41253e",
+  "clean": false
+ },
+ {
+  "id": "cs-063",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 63,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T19:00:54",
+  "palette": [
+   "#9a59d8",
+   "#592dbe",
+   "#d71331"
+  ],
+  "avg": "#372343",
+  "clean": false
+ },
+ {
+  "id": "cs-073",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 73,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T19:10:34",
+  "palette": [
+   "#374ad0",
+   "#f5d517",
+   "#be2db6"
+  ],
+  "avg": "#342b3b",
+  "clean": false
+ },
+ {
+  "id": "cs-077",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 77,
+  "w": 1200,
+  "h": 1600,
+  "takenAt": "2026-09-20T19:14:26",
+  "palette": [
+   "#7254e8",
+   "#2d35be",
+   "#be2d7f"
+  ],
+  "avg": "#2c273f",
+  "clean": true
+ },
+ {
+  "id": "cs-078",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 78,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T19:15:24",
+  "palette": [
+   "#7b60dc",
+   "#f0ce27",
+   "#be2d72"
+  ],
+  "avg": "#382b3b",
+  "clean": true
+ },
+ {
+  "id": "cs-079",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 79,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T19:16:22",
+  "palette": [
+   "#f7a145",
+   "#be2d66",
+   "#ca2121"
+  ],
+  "avg": "#42242b",
+  "clean": false
+ },
+ {
+  "id": "cs-083",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 83,
+  "w": 1067,
+  "h": 1600,
+  "takenAt": "2026-09-20T19:20:14",
+  "palette": [
+   "#6268da",
+   "#b94cd5",
+   "#be432d"
+  ],
+  "avg": "#322f37",
+  "clean": false
+ },
+ {
+  "id": "cs-086",
+  "type": "photo",
+  "event": "color-splash-jumping",
+  "seq": 86,
+  "w": 1600,
+  "h": 1067,
+  "takenAt": "2026-09-20T19:23:08",
+  "palette": [
+   "#eb0a35",
+   "#f69420",
+   "#7b60dc"
+  ],
+  "avg": "#4d192d",
+  "clean": false
+ },
+ {
+  "id": "sl-001",
+  "type": "photo",
+  "event": "stadtlauf",
+  "seq": 1,
+  "w": 2400,
+  "h": 1600,
+  "takenAt": "2026-06-14T10:09:00",
+  "palette": [
+   "#c0702b",
+   "#b3be2d",
+   "#b3be2d"
+  ],
+  "avg": "#1f1710",
+  "clean": true,
+  "sample": true,
+  "credit": "Mike Cox"
+ },
+ {
+  "id": "sl-002",
+  "type": "photo",
+  "event": "stadtlauf",
+  "seq": 2,
+  "w": 2400,
+  "h": 1600,
+  "takenAt": "2026-06-14T10:18:00",
+  "palette": [
+   "#da8362",
+   "#315fcf",
+   "#be2d31"
+  ],
+  "avg": "#363031",
+  "clean": true,
+  "sample": true,
+  "credit": "Cecep Rahmat"
+ },
+ {
+  "id": "sl-003",
+  "type": "photo",
+  "event": "stadtlauf",
+  "seq": 3,
+  "w": 2400,
+  "h": 1350,
+  "takenAt": "2026-06-14T10:27:00",
+  "palette": [
+   "#be682d",
+   "#be702d",
+   "#be702d"
+  ],
+  "avg": "#433123",
+  "clean": true,
+  "sample": true,
+  "credit": "Kenneth Schipper"
+ },
+ {
+  "id": "sl-004",
+  "type": "photo",
+  "event": "stadtlauf",
+  "seq": 4,
+  "w": 2400,
+  "h": 1600,
+  "takenAt": "2026-06-14T10:36:00",
+  "palette": [
+   "#2d8dbe",
+   "#be552d",
+   "#3f97d2"
+  ],
+  "avg": "#2b353b",
+  "clean": true,
+  "sample": true,
+  "credit": "Miguel A Amutio"
+ },
+ {
+  "id": "sl-005",
+  "type": "photo",
+  "event": "stadtlauf",
+  "seq": 5,
+  "w": 2400,
+  "h": 1597,
+  "takenAt": "2026-06-14T10:45:00",
+  "palette": [
+   "#757575",
+   "#9e9e9e",
+   "#757575"
+  ],
+  "avg": "#333333",
+  "clean": true,
+  "sample": true,
+  "credit": "Hansheng Zhao"
+ },
+ {
+  "id": "sl-c01",
+  "type": "clip",
+  "event": "stadtlauf",
+  "seq": 1,
+  "w": 1280,
+  "h": 720,
+  "takenAt": "2026-06-14T10:12:20",
+  "palette": [
+   "#be6f2d",
+   "#cf7e34",
+   "#da9862"
+  ],
+  "avg": "#3d3329",
+  "clean": true,
+  "duration": 26.6,
+  "fps": 24,
+  "sample": true,
+  "credit": "Mixkit"
+ },
+ {
+  "id": "fn-001",
+  "type": "photo",
+  "event": "fight-night",
+  "seq": 1,
+  "w": 2400,
+  "h": 1600,
+  "takenAt": "2026-10-03T19:41:00",
+  "palette": [
+   "#be2d3c",
+   "#2d6ebe",
+   "#716c7e"
+  ],
+  "avg": "#343233",
+  "clean": true,
+  "sample": true,
+  "credit": "Attentie Attentie"
+ },
+ {
+  "id": "fn-002",
+  "type": "photo",
+  "event": "fight-night",
+  "seq": 2,
+  "w": 2400,
+  "h": 1600,
+  "takenAt": "2026-10-03T19:52:00",
+  "palette": [
+   "#195cd2",
+   "#332dbe",
+   "#be2d2d"
+  ],
+  "avg": "#121824",
+  "clean": true,
+  "sample": true,
+  "credit": "Joel Muniz"
+ },
+ {
+  "id": "fn-003",
+  "type": "photo",
+  "event": "fight-night",
+  "seq": 3,
+  "w": 2400,
+  "h": 1600,
+  "takenAt": "2026-10-03T20:03:00",
+  "palette": [
+   "#d17c39",
+   "#d17c39",
+   "#d17c39"
+  ],
+  "avg": "#3a332c",
+  "clean": true,
+  "sample": true,
+  "credit": "Hermes Rivera"
+ },
+ {
+  "id": "fn-004",
+  "type": "photo",
+  "event": "fight-night",
+  "seq": 4,
+  "w": 2400,
+  "h": 1600,
+  "takenAt": "2026-10-03T20:14:00",
+  "palette": [
+   "#da8d62",
+   "#be462d",
+   "#186cd3"
+  ],
+  "avg": "#353133",
+  "clean": true,
+  "sample": true,
+  "credit": "Solal Ohayon"
+ },
+ {
+  "id": "fn-005",
+  "type": "photo",
+  "event": "fight-night",
+  "seq": 5,
+  "w": 2400,
+  "h": 2106,
+  "takenAt": "2026-10-03T20:25:00",
+  "palette": [
+   "#c24e28",
+   "#777674",
+   "#2dbebd"
+  ],
+  "avg": "#130f0d",
+  "clean": true,
+  "sample": true,
+  "credit": "Rémi Metin"
+ },
+ {
+  "id": "fn-c01",
+  "type": "clip",
+  "event": "fight-night",
+  "seq": 1,
+  "w": 1080,
+  "h": 1920,
+  "takenAt": "2026-10-03T19:44:20",
+  "palette": [
+   "#2d8cbe",
+   "#b3be2d",
+   "#2dbe5d"
+  ],
+  "avg": "#33372f",
+  "clean": true,
+  "duration": 4.2,
+  "fps": 24,
+  "sample": true,
+  "credit": "Mixkit"
+ },
+ {
+  "id": "hc-001",
+  "type": "photo",
+  "event": "hallencup",
+  "seq": 1,
+  "w": 2400,
+  "h": 1600,
+  "takenAt": "2026-09-27T11:13:00",
+  "palette": [
+   "#d3da62",
+   "#be3f2d",
+   "#bea42d"
+  ],
+  "avg": "#353431",
+  "clean": true,
+  "sample": true,
+  "credit": "Alfonso Scarpa"
+ },
+ {
+  "id": "hc-002",
+  "type": "photo",
+  "event": "hallencup",
+  "seq": 2,
+  "w": 2400,
+  "h": 1800,
+  "takenAt": "2026-09-27T11:26:00",
+  "palette": [
+   "#2daabe",
+   "#d5da62",
+   "#757674"
+  ],
+  "avg": "#313534",
+  "clean": true,
+  "sample": true,
+  "credit": "Alfonso Scarpa"
+ },
+ {
+  "id": "hc-003",
+  "type": "photo",
+  "event": "hallencup",
+  "seq": 3,
+  "w": 2400,
+  "h": 1920,
+  "takenAt": "2026-09-27T11:39:00",
+  "palette": [
+   "#d1791a",
+   "#daa462",
+   "#2d3fbe"
+  ],
+  "avg": "#3d3329",
+  "clean": true,
+  "sample": true,
+  "credit": "Alfonso Scarpa"
+ },
+ {
+  "id": "hc-004",
+  "type": "photo",
+  "event": "hallencup",
+  "seq": 4,
+  "w": 2400,
+  "h": 1601,
+  "takenAt": "2026-09-27T11:52:00",
+  "palette": [
+   "#be6d2d",
+   "#d2bc3e",
+   "#be2d37"
+  ],
+  "avg": "#3e3628",
+  "clean": true,
+  "sample": true,
+  "credit": "Alfonso Scarpa"
+ },
+ {
+  "id": "hc-005",
+  "type": "photo",
+  "event": "hallencup",
+  "seq": 5,
+  "w": 2400,
+  "h": 1358,
+  "takenAt": "2026-09-27T12:05:00",
+  "palette": [
+   "#e11d09",
+   "#b9be2d",
+   "#7f7d7e"
+  ],
+  "avg": "#29271c",
+  "clean": true,
+  "sample": true,
+  "credit": "Falaq Lazuardi"
+ },
+ {
+  "id": "hc-c01",
+  "type": "clip",
+  "event": "hallencup",
+  "seq": 1,
+  "w": 1920,
+  "h": 1080,
+  "takenAt": "2026-09-27T11:16:20",
+  "palette": [
+   "#55be2d",
+   "#2d83be",
+   "#6283da"
+  ],
+  "avg": "#2c3a2f",
+  "clean": true,
+  "duration": 3.5,
+  "fps": 24,
+  "sample": true,
+  "credit": "Mixkit"
+ },
+ {
+  "id": "td-001",
+  "type": "photo",
+  "event": "throwdown",
+  "seq": 1,
+  "w": 2400,
+  "h": 1602,
+  "takenAt": "2026-07-25T09:40:00",
+  "palette": [
+   "#2d9dbe",
+   "#cf7232",
+   "#da9562"
+  ],
+  "avg": "#313535",
+  "clean": true,
+  "sample": true,
+  "credit": "John Arano"
+ },
+ {
+  "id": "td-002",
+  "type": "photo",
+  "event": "throwdown",
+  "seq": 2,
+  "w": 2400,
+  "h": 1593,
+  "takenAt": "2026-07-25T09:50:00",
+  "palette": [
+   "#2d5cbe",
+   "#2d68be",
+   "#be502d"
+  ],
+  "avg": "#262b37",
+  "clean": true,
+  "sample": true,
+  "credit": "Omid Armin"
+ },
+ {
+  "id": "td-003",
+  "type": "photo",
+  "event": "throwdown",
+  "seq": 3,
+  "w": 2400,
+  "h": 1386,
+  "takenAt": "2026-07-25T10:00:00",
+  "palette": [
+   "#d28d3e",
+   "#be842d",
+   "#d2da62"
+  ],
+  "avg": "#3b342b",
+  "clean": true,
+  "sample": true,
+  "credit": "Victor Freitas"
+ },
+ {
+  "id": "td-004",
+  "type": "photo",
+  "event": "throwdown",
+  "seq": 4,
+  "w": 2400,
+  "h": 1350,
+  "takenAt": "2026-07-25T10:10:00",
+  "palette": [
+   "#cfa133",
+   "#2dbe93",
+   "#737b6f"
+  ],
+  "avg": "#353630",
+  "clean": true,
+  "sample": true,
+  "credit": "Vitaly Gariev"
+ },
+ {
+  "id": "td-005",
+  "type": "photo",
+  "event": "throwdown",
+  "seq": 5,
+  "w": 2400,
+  "h": 1350,
+  "takenAt": "2026-07-25T10:20:00",
+  "palette": [
+   "#cacf32",
+   "#2dbe9e",
+   "#98a4a0"
+  ],
+  "avg": "#303631",
+  "clean": true,
+  "sample": true,
+  "credit": "Vitaly Gariev"
+ },
+ {
+  "id": "td-c01",
+  "type": "clip",
+  "event": "throwdown",
+  "seq": 1,
+  "w": 720,
+  "h": 1280,
+  "takenAt": "2026-07-25T09:43:20",
+  "palette": [
+   "#be4e2d",
+   "#cc7430",
+   "#cc7430"
+  ],
+  "avg": "#3d241c",
+  "clean": true,
+  "duration": 14.7,
+  "fps": 24,
+  "sample": true,
+  "credit": "Mixkit"
+ },
+ {
+  "id": "td-c02",
+  "type": "clip",
+  "event": "throwdown",
+  "seq": 2,
+  "w": 1280,
+  "h": 720,
+  "takenAt": "2026-07-25T09:53:20",
+  "palette": [
+   "#2d83be",
+   "#2d7bbe",
+   "#babe2d"
+  ],
+  "avg": "#2a3236",
+  "clean": true,
+  "duration": 10.2,
+  "fps": 24,
+  "sample": true,
+  "credit": "Mixkit"
+ }
+]

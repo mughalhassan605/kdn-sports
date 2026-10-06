@@ -1,0 +1,203 @@
+"use client";
+
+import { useProgress, useTexture } from "@react-three/drei";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Suspense, useEffect, useMemo, useRef } from "react";
+import * as THREE from "three";
+import { ARRIVE, cameraZ, finalSlot, FOV, heroSlot, smoothstep, tunnelSlots, type Slot } from "./layout";
+
+export type FlightItem = { id: string; url: string; ratio: number; palette: string[]; seq: number };
+
+/** Mutable state written by the DOM stage (scroll, intro tweens) and read every frame here. */
+export type FlightState = { progress: number; velocity: number; pixel: number; heroIn: number; px: number; py: number };
+
+type Props = {
+  hero: FlightItem;
+  items: FlightItem[];
+  final: FlightItem;
+  state: React.RefObject<FlightState>;
+  active: boolean;
+  onReady: () => void;
+  onLoad: (pct: number) => void;
+  /** The print nearest to the camera changed: the page light follows it. */
+  onNear: (item: FlightItem) => void;
+};
+
+const VERT = /* glsl */ `
+  uniform float uBend;
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    vec3 p = position;
+    float c = uv.x - 0.5;
+    // Speed bends the print like film pulled through a gate.
+    p.z -= c * c * uBend * 1.5;
+    p.y += sin(uv.x * 3.14159) * uBend * 0.05;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+  }
+`;
+
+const FRAG = /* glsl */ `
+  uniform sampler2D uMap;
+  uniform float uOpacity;
+  uniform float uShift;
+  uniform float uPixel;
+  uniform float uAspect;
+  uniform float uDim;
+  varying vec2 vUv;
+  void main() {
+    vec2 uv = vUv;
+    // "Developing": the picture starts as a coarse mosaic and resolves to full sharpness.
+    if (uPixel > 0.002) {
+      float cells = mix(260.0, 9.0, pow(uPixel, 0.6));
+      vec2 grid = vec2(cells * uAspect, cells);
+      uv = (floor(uv * grid) + 0.5) / grid;
+    }
+    float s = uShift + uPixel * 0.012;
+    vec3 col;
+    col.r = texture2D(uMap, uv + vec2(s, 0.0)).r;
+    col.g = texture2D(uMap, uv).g;
+    col.b = texture2D(uMap, uv - vec2(s, 0.0)).b;
+    col *= uDim;
+    gl_FragColor = vec4(col, uOpacity);
+  }
+`;
+
+function Prints({ hero, items, final, state, onReady, onNear }: Omit<Props, "active" | "onLoad">) {
+  const all = useMemo(() => [hero, ...items, final], [hero, items, final]);
+  const textures = useTexture(all.map((i) => i.url));
+  const size = useThree((s) => s.size);
+  const aspect = size.width / size.height;
+
+  const { slots, camEnd } = useMemo(() => {
+    const fin = finalSlot(items.length, final.ratio, aspect);
+    const list: Slot[] = [heroSlot(hero.ratio, aspect), ...tunnelSlots(items.map((i) => i.ratio), aspect), fin.slot];
+    return { slots: list, camEnd: fin.camEnd };
+  }, [hero.ratio, items, final.ratio, aspect]);
+
+  const uniforms = useMemo(
+    () =>
+      all.map((item, i) => ({
+        uMap: { value: textures[i] },
+        uOpacity: { value: 0 },
+        uShift: { value: 0 },
+        uPixel: { value: 0 },
+        uBend: { value: 0 },
+        uAspect: { value: item.ratio },
+        uDim: { value: 1 },
+      })),
+    [all, textures],
+  );
+
+  const meshes = useRef<(THREE.Mesh | null)[]>([]);
+  const smooth = useRef({ v: 0, px: 0, py: 0, near: -1, tick: 0 });
+
+  useEffect(() => {
+    onReady();
+  }, [onReady]);
+
+  useFrame((three, dt) => {
+    const st = state.current;
+    const sm = smooth.current;
+    const k = 1 - Math.exp(-dt * 6);
+
+    const vTarget = Math.max(-1, Math.min(1, st.velocity / 2600));
+    sm.v += (vTarget - sm.v) * k;
+    sm.px += (st.px - sm.px) * k * 0.6;
+    sm.py += (st.py - sm.py) * k * 0.6;
+
+    const camZ = cameraZ(st.progress, camEnd);
+    const settle = smoothstep(ARRIVE - 0.1, ARRIVE, st.progress); // no parallax once the last print fills the frame
+    three.camera.position.set(sm.px * 0.24 * (1 - settle), sm.py * 0.15 * (1 - settle), camZ);
+    three.camera.rotation.set(sm.py * 0.02 * (1 - settle), -sm.px * 0.03 * (1 - settle), 0);
+
+    const last = slots.length - 1;
+    let near = -1;
+    let nearD = 99;
+
+    for (let i = 0; i < slots.length; i++) {
+      const mesh = meshes.current[i];
+      if (!mesh) continue;
+      const u = (mesh.material as THREE.ShaderMaterial).uniforms;
+      const d = camZ - slots[i].z;
+      let opacity: number;
+      let dim = 1;
+
+      if (i === 0) {
+        opacity = smoothstep(0.3, 1.5, d) * st.heroIn;
+        u.uPixel.value = st.pixel;
+        mesh.scale.set(slots[0].w * (1 + st.pixel * 0.1), slots[0].h * (1 + st.pixel * 0.1), 1);
+      } else if (i === last) {
+        opacity = 1 - smoothstep(11, 19, d);
+      } else {
+        opacity = (1 - smoothstep(9, 15, d)) * smoothstep(0.3, 1.5, d);
+        dim = 1 - smoothstep(2.5, 13, d) * 0.62;
+        if (d > 1.1 && d < nearD) {
+          nearD = d;
+          near = i;
+        }
+      }
+
+      mesh.visible = opacity > 0.003;
+      u.uOpacity.value = opacity;
+      u.uDim.value = dim;
+      u.uShift.value = Math.abs(sm.v) * 0.014;
+      u.uBend.value = i === last ? 0 : sm.v * 1.1;
+    }
+
+    // Report the nearest print a few times a second: frame counter and ambient light follow the flight.
+    if (++sm.tick % 8 === 0) {
+      const idx = st.progress > ARRIVE - 0.04 ? last : st.progress < 0.05 ? 0 : near;
+      if (idx >= 0 && idx !== sm.near) {
+        sm.near = idx;
+        onNear(all[idx]);
+      }
+    }
+  });
+
+  return (
+    <>
+      {slots.map((s, i) => (
+        <mesh
+          key={all[i].id + i}
+          ref={(m) => {
+            meshes.current[i] = m;
+          }}
+          position={[s.x, s.y, s.z]}
+          scale={[s.w, s.h, 1]}
+        >
+          <planeGeometry args={[1, 1, 18, 1]} />
+          <shaderMaterial vertexShader={VERT} fragmentShader={FRAG} uniforms={uniforms[i]} transparent depthWrite={false} depthTest={false} />
+        </mesh>
+      ))}
+    </>
+  );
+}
+
+// Subscribes outside React: the loading manager reports while other components
+// are rendering, and a state update there would be an update-during-render.
+function LoadReport({ onLoad }: { onLoad: (pct: number) => void }) {
+  useEffect(() => {
+    onLoad(useProgress.getState().progress);
+    return useProgress.subscribe((s) => onLoad(s.progress));
+  }, [onLoad]);
+  return null;
+}
+
+export default function FlightScene({ active, onLoad, ...rest }: Props) {
+  return (
+    <Canvas
+      className="!absolute inset-0"
+      dpr={[1, 1.6]}
+      camera={{ fov: FOV, near: 0.1, far: 60, position: [0, 0, 0] }}
+      gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+      frameloop={active ? "always" : "never"}
+      aria-hidden
+    >
+      <LoadReport onLoad={onLoad} />
+      <Suspense fallback={null}>
+        <Prints {...rest} />
+      </Suspense>
+    </Canvas>
+  );
+}

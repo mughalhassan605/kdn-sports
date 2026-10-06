@@ -1,26 +1,523 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ==========================================================================
+   NEON DARKROOM  (see docs/DIRECTION.md)
+   The interface is a dark room, the media is the only light source.
+
+   Colour   ink ground, paper text, ONE accent ("glow", the glow-stick lime)
+            reserved for buying and selecting. Every other colour on screen
+            comes from the photographs (ambient layer, frame spill).
+   Shape    controls are pills, surfaces 14px, media 4px (prints stay crisp).
+   Type     Archivo on its width axis: expanded for words, condensed for
+            numbers. Geist Mono only for data.
+   Layers   0 ambient · 10 content · 30 sticky bars · 40 header
+            50 drawers and dialogs · 55 toast · 60 grain
+   ========================================================================== */
+
+@theme {
+  --color-ink-0: #08080a;
+  --color-ink-1: #0e0e12;
+  --color-ink-2: #16161b;
+  --color-ink-3: #212128;
+  --color-paper: #f3f2ee;
+  --color-paper-2: #b5b4af;
+  --color-paper-3: #807f7b;
+  --color-glow: #d4ff3f;
+  --color-glow-ink: #11150a;
+  --color-rec: #ff4a3d;
+  --color-line: rgb(255 255 255 / 0.1);
+  --color-line-2: rgb(255 255 255 / 0.2);
+
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
+
+  --radius-media: 4px;
+  --radius-panel: 14px;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+
+  --breakpoint-3xl: 112rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* The ambient colours are registered so they can transition inside gradients. */
+@property --a1 { syntax: "<color>"; inherits: true; initial-value: #6a2bd9; }
+@property --a2 { syntax: "<color>"; inherits: true; initial-value: #d12a7c; }
+@property --a3 { syntax: "<color>"; inherits: true; initial-value: #2a54c9; }
+
+@layer base {
+  html {
+    background: var(--color-ink-0);
+    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+    scrollbar-color: var(--color-ink-3) var(--color-ink-0);
+    scroll-padding-top: 5.5rem;
+  }
+
+  /* No overflow on html/body: it would turn the root into a scroll container
+     and break scroll-linked motion. Wide elements clip themselves instead. */
+  body {
+    font-family: var(--font-sans);
+    font-stretch: 100%;
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--color-paper-2);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4 {
+    color: var(--color-paper);
+    overflow-wrap: break-word;
+    hyphens: auto;
+    text-wrap: balance;
+  }
+
+  p { text-wrap: pretty; }
+
+  ::selection { background: var(--color-glow); color: var(--color-glow-ink); }
+
+  :focus-visible {
+    outline: 2px solid var(--color-glow);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; }
+
+  img, video { display: block; max-width: 100%; }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer components {
+  /* ---------------------------------------------------------------- layout */
+  .wrap {
+    width: 100%;
+    max-width: 97.5rem;
+    margin-inline: auto;
+    padding-inline: clamp(1.125rem, 3.2vw, 3rem);
+  }
+  .sec { padding-block: clamp(4rem, 7.5vw, 7rem); }
+
+  /* ------------------------------------------------------------------ type */
+  .t-hero {
+    font-stretch: 100%;
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    font-size: clamp(2rem, 10.4vw, 3.25rem);
+  }
+  @media (min-width: 48rem) {
+    .t-hero { font-stretch: 125%; font-size: clamp(2.75rem, 5.9vw, 6.25rem); line-height: 0.9; }
+  }
+  .t-h1 {
+    font-stretch: 112%;
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 0.94;
+    letter-spacing: -0.018em;
+    font-size: clamp(1.9rem, 4.7vw, 4.6rem);
+  }
+  .t-h2 {
+    font-stretch: 112%;
+    font-weight: 780;
+    text-transform: uppercase;
+    line-height: 0.96;
+    letter-spacing: -0.015em;
+    font-size: clamp(1.55rem, 3.2vw, 3rem);
+  }
+  @media (min-width: 48rem) {
+    .t-h1, .t-h2 { font-stretch: 125%; }
+  }
+  .t-h3 {
+    font-stretch: 110%;
+    font-weight: 660;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    font-size: clamp(1.125rem, 1.45vw, 1.4rem);
+    color: var(--color-paper);
+  }
+  .t-lede { font-size: clamp(1rem, 1.2vw, 1.15rem); line-height: 1.5; }
+  /* Numbers run condensed: the counterweight to the expanded words. */
+  .t-num {
+    font-stretch: 62%;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+    line-height: 0.86;
+    color: var(--color-paper);
+  }
+  .t-hud {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  /* --------------------------------------------------------------- buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    height: 3rem;
+    padding-inline: 1.4rem;
+    border-radius: 999px;
+    font-stretch: 108%;
+    font-weight: 660;
+    font-size: 0.9375rem;
+    letter-spacing: -0.005em;
+    white-space: nowrap;
+    transition: background-color 0.25s, color 0.25s, border-color 0.25s, opacity 0.25s, transform 0.2s var(--ease-out-expo);
+  }
+  .btn:active { transform: scale(0.975); }
+  .btn:disabled { opacity: 0.55; }
+  .btn-sm { height: 2.5rem; padding-inline: 1.05rem; font-size: 0.875rem; }
+  .btn-paper { background: var(--color-paper); color: var(--color-ink-0); }
+  .btn-paper:hover { background: var(--color-glow); }
+  .btn-glow { background: var(--color-glow); color: var(--color-glow-ink); }
+  .btn-glow:hover { background: var(--color-paper); }
+  .btn-line { border: 1px solid var(--color-line-2); color: var(--color-paper); background: rgb(8 8 10 / 0.35); }
+  .btn-line:hover { border-color: rgb(255 255 255 / 0.45); background: rgb(255 255 255 / 0.08); }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 2rem;
+    padding-inline: 0.8rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-line);
+    background: rgb(255 255 255 / 0.05);
+    color: var(--color-paper);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: background-color 0.25s, border-color 0.25s, color 0.25s;
+  }
+  a.chip:hover, button.chip:hover { border-color: var(--color-line-2); background: rgb(255 255 255 / 0.1); }
+  .chip[aria-pressed="true"], .chip[aria-current="true"], .chip[data-on="true"] {
+    background: var(--color-paper);
+    border-color: var(--color-paper);
+    color: var(--color-ink-0);
+  }
+
+  .panel {
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-panel);
+    background: rgb(14 14 18 / 0.72);
+    backdrop-filter: blur(18px) saturate(1.3);
+    -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .panel { background: var(--color-ink-1); backdrop-filter: none; -webkit-backdrop-filter: none; }
+  }
+
+  .field {
+    width: 100%;
+    height: 3.125rem;
+    padding-inline: 1rem;
+    border-radius: var(--radius-panel);
+    border: 1px solid var(--color-line-2);
+    background: var(--color-ink-1);
+    color: var(--color-paper);
+    font-size: 1rem;
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+  textarea.field { height: auto; padding-block: 0.85rem; resize: vertical; min-height: 7.5rem; }
+  .field::placeholder { color: var(--color-paper-3); }
+  .field:hover { border-color: rgb(255 255 255 / 0.32); }
+  .field:focus { outline: none; border-color: var(--color-glow); background: var(--color-ink-2); }
+  .field[aria-invalid="true"] { border-color: var(--color-rec); }
+
+  .link-u {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.45s var(--ease-out-expo), color 0.25s;
+  }
+  .link-u:hover { background-size: 100% 1px; color: var(--color-paper); }
+
+  /* ------------------------------------------------------------ zoom type */
+  /* Width-axis hover. The ghost reserves the widest setting so neighbours never move. */
+  .zoom { position: relative; display: inline-block; font-stretch: 100%; transition: font-stretch 0.5s var(--ease-out-expo); }
+  .zoom::after {
+    content: attr(data-text);
+    display: block;
+    height: 0;
+    visibility: hidden;
+    overflow: hidden;
+    font-stretch: 125%;
+    pointer-events: none;
+    user-select: none;
+  }
+  .zoom-in { display: block; text-align: center; font-stretch: inherit; }
+  a:hover > .zoom, a[aria-current="page"] > .zoom, button:hover > .zoom { font-stretch: 125%; }
+  .zoom-sm::after { font-stretch: 114%; }
+  a:hover > .zoom-sm, a[aria-current="page"] > .zoom-sm { font-stretch: 114%; }
+
+  /* -------------------------------------------------------------- ambient */
+  .ambient {
+    position: fixed;
+    inset: -12vmax;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(46% 42% at 16% 14%, var(--a1), transparent 72%),
+      radial-gradient(40% 44% at 88% 26%, var(--a2), transparent 72%),
+      radial-gradient(52% 46% at 52% 104%, var(--a3), transparent 72%);
+    opacity: var(--ambient-level, 0.3);
+    transition: --a1 1.2s var(--ease-out-expo), --a2 1.2s var(--ease-out-expo), --a3 1.2s var(--ease-out-expo), opacity 0.9s;
+  }
+  /* The same light for stages that are opaque and cannot show the page layer. */
+  .glow-layer {
+    position: absolute;
+    inset: -12vmax;
+    pointer-events: none;
+    background:
+      radial-gradient(46% 42% at 16% 14%, var(--a1), transparent 72%),
+      radial-gradient(40% 44% at 88% 26%, var(--a2), transparent 72%),
+      radial-gradient(52% 46% at 52% 104%, var(--a3), transparent 72%);
+    opacity: 0.3;
+    transition: --a1 1.2s var(--ease-out-expo), --a2 1.2s var(--ease-out-expo), --a3 1.2s var(--ease-out-expo);
+  }
+  .ambient-shade {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(120% 90% at 50% 40%, transparent 30%, rgb(8 8 10 / 0.86) 100%);
+  }
+
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.085;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Light spilling out of a frame: its own palette, blurred, behind it. */
+  .spill { position: relative; isolation: isolate; }
+  .spill::before {
+    content: "";
+    position: absolute;
+    inset: -9% -7%;
+    z-index: -1;
+    border-radius: 40%;
+    background:
+      radial-gradient(60% 70% at 20% 30%, var(--c1), transparent 70%),
+      radial-gradient(60% 70% at 85% 35%, var(--c2), transparent 70%),
+      radial-gradient(70% 60% at 50% 95%, var(--c3), transparent 70%);
+    filter: blur(56px);
+    opacity: var(--spill, 0.5);
+    pointer-events: none;
+  }
+
+  /* ----------------------------------------------------------- viewfinder */
+  .vf { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+  .vf i {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 0 solid var(--color-paper);
+    opacity: 0;
+    transition: transform 0.45s var(--ease-out-expo), opacity 0.3s;
+  }
+  .vf i:nth-child(1) { top: 10px; left: 10px; border-top-width: 1.5px; border-left-width: 1.5px; transform: translate(-7px, -7px); }
+  .vf i:nth-child(2) { top: 10px; right: 10px; border-top-width: 1.5px; border-right-width: 1.5px; transform: translate(7px, -7px); }
+  .vf i:nth-child(3) { bottom: 10px; left: 10px; border-bottom-width: 1.5px; border-left-width: 1.5px; transform: translate(-7px, 7px); }
+  .vf i:nth-child(4) { bottom: 10px; right: 10px; border-bottom-width: 1.5px; border-right-width: 1.5px; transform: translate(7px, 7px); }
+  .vf-host:hover .vf i, .vf-host:focus-visible .vf i, .vf[data-on="true"] i { opacity: 1; transform: none; }
+  .vf[data-tone="glow"] i { border-color: var(--color-glow); }
+  .vf[data-out="true"] { inset: -19px; }
+  @media (max-width: 47.99rem) { .vf[data-out="true"] { inset: -15px; } }
+
+  /* ------------------------------------------------------- justified grid */
+  /* Row height is equal across a row because grow and basis are both
+     proportional to the aspect ratio. The ::after eats the last row's slack. */
+  .jgrid { display: flex; flex-wrap: wrap; gap: var(--jgap, 6px); --rh: 150px; }
+  .jgrid::after { content: ""; flex-grow: 1000; }
+  .jgrid > * {
+    flex-grow: var(--ar);
+    flex-shrink: 1;
+    flex-basis: calc(var(--ar) * var(--rh));
+    aspect-ratio: var(--ar);
+    min-width: 0;
+  }
+  @media (min-width: 40rem) { .jgrid { --rh: 200px; } }
+  @media (min-width: 64rem) { .jgrid { --rh: 250px; --jgap: 8px; } }
+  @media (min-width: 96rem) { .jgrid { --rh: 290px; } }
+  .jgrid[data-size="s"] { --rh: 110px; }
+  @media (min-width: 64rem) { .jgrid[data-size="s"] { --rh: 170px; } }
+  .jgrid[data-size="l"] { --rh: 220px; }
+  @media (min-width: 64rem) { .jgrid[data-size="l"] { --rh: 360px; } }
+
+  /* --------------------------------------------------------------- marquee */
+  .marquee { overflow: hidden; }
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee var(--dur, 70s) linear infinite;
+  }
+  .marquee:hover .marquee-track, .marquee:focus-within .marquee-track { animation-play-state: paused; }
+  @keyframes marquee { to { transform: translate3d(-50%, 0, 0); } }
+
+  /* ---------------------------------------------------------------- range */
+  .range { -webkit-appearance: none; appearance: none; width: 100%; height: 2.25rem; background: transparent; cursor: pointer; }
+  .range::-webkit-slider-runnable-track { height: 2px; background: var(--color-line-2); }
+  .range::-moz-range-track { height: 2px; background: var(--color-line-2); }
+  .range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: -0.6875rem;
+    border-radius: 999px;
+    background: var(--color-glow);
+    border: 4px solid var(--color-ink-0);
+    box-shadow: 0 0 0 1px var(--color-glow);
+  }
+  .range::-moz-range-thumb {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 999px;
+    background: var(--color-glow);
+    border: 4px solid var(--color-ink-0);
+    box-shadow: 0 0 0 1px var(--color-glow);
+  }
+
+  /* Visually hidden, still focusable (used for the compare slider input). */
+  .sr-range {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize;
+  }
+
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+
+  /* ------------------------------------------------------- load-in motion */
+  /* Hero lines: rise out of a mask while the width axis opens, like a lens being turned. */
+  .t-hero { --zoom-to: 100%; }
+  .t-h1, .t-h2 { --zoom-to: 112%; }
+  @media (min-width: 48rem) { .t-hero, .t-h1, .t-h2 { --zoom-to: 125%; } }
+  .zoom-line-mask { display: block; overflow: hidden; padding-block: 0.04em 0.09em; margin-block: -0.04em -0.09em; }
+  .zoom-line {
+    display: block;
+    animation: zoom-line 1.2s var(--ease-out-expo) both;
+    animation-delay: calc(var(--i, 0) * 130ms + var(--d, 0ms));
+  }
+  @keyframes zoom-line {
+    from { transform: translate3d(0, 108%, 0); font-stretch: 62%; }
+    to { transform: none; font-stretch: var(--zoom-to, 125%); }
+  }
+
+  .rise { animation: rise 0.95s var(--ease-out-expo) both; animation-delay: var(--d, 0ms); }
+  @keyframes rise {
+    from { opacity: 0; transform: translate3d(0, 22px, 0); }
+    to { opacity: 1; transform: none; }
+  }
+
+  /* A frame opening like a shutter slit. */
+  .shutter { animation: shutter 1.35s var(--ease-in-out-quart) both; animation-delay: var(--d, 0ms); }
+  @keyframes shutter {
+    from { clip-path: inset(49.5% 0 49.5% 0); }
+    to { clip-path: inset(0); }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* -------------------------------------------------------- scripted reveals */
+/* Elements GSAP will reveal stay hidden until it owns them. The boot script
+   in the layout sets data-js; if the app never mounts it flips to "fail". */
+html[data-js="1"] [data-rv] { visibility: hidden; }
+html[data-js="fail"] [data-rv] { visibility: visible !important; }
+/* The loader only exists when scripts run; without them the hero is simply there. */
+.ld { display: none; }
+html[data-js="1"] .ld { display: block; }
+
+/* ------------------------------------------------------------------ cursor */
+.cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 999px;
+  background: var(--color-paper);
+  color: transparent;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: difference;
+  transition: width 0.4s var(--ease-out-expo), height 0.4s var(--ease-out-expo), margin 0.4s var(--ease-out-expo), background-color 0.3s, opacity 0.3s;
+}
+.cursor[data-on="1"] { opacity: 1; }
+.cursor[data-mode="link"] { width: 28px; height: 28px; margin: -14px 0 0 -14px; }
+.cursor[data-mode="label"] {
+  width: 62px;
+  height: 62px;
+  margin: -31px 0 0 -31px;
+  background: var(--color-glow);
+  color: var(--color-glow-ink);
+  mix-blend-mode: normal;
+}
+.cursor span {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------- view transitions */
+/* A tile becomes the detail frame: same picture, one object moving. */
+::view-transition-group(.morph) {
+  animation-duration: 520ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+::view-transition-image-pair(.morph) { animation-name: via-soft; }
+@keyframes via-soft { 35% { filter: blur(2px) brightness(1.08); } }
+
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 260ms; }
+
+/* Route change: the old page sinks back, the new one rises through a closing shutter. */
+::view-transition-old(.page-out) { animation: 420ms cubic-bezier(0.76, 0, 0.24, 1) both page-out; }
+::view-transition-new(.page-in) { animation: 900ms cubic-bezier(0.16, 1, 0.3, 1) 180ms both page-in; }
+@keyframes page-out { to { opacity: 0; transform: translate3d(0, -40px, 0) scale(0.985); filter: blur(4px); } }
+@keyframes page-in {
+  from { clip-path: inset(100% 0 0 0); transform: translate3d(0, 60px, 0); }
+  to { clip-path: inset(0); transform: none; }
+}
+
+/* ---------------------------------------------------------------- lenis */
+html.lenis, html.lenis body { height: auto; }
+.lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+.lenis [data-lenis-prevent], .lenis [data-lenis-prevent-wheel], .lenis [data-lenis-prevent-touch] { overscroll-behavior: contain; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+
+/* --------------------------------------------------------- reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track, .zoom-line, .rise, .shutter { animation: none; }
+  .zoom-line { font-stretch: var(--zoom-to, 125%); }
+  .ambient { transition: none; }
+  .zoom, .vf i { transition: none; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
