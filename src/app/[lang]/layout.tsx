@@ -7,6 +7,7 @@ import { AmbientLayer } from "@/components/shell/Ambient";
 import { CartDrawer, Toast } from "@/components/shell/CartDrawer";
 import { Footer } from "@/components/shell/Footer";
 import { Header } from "@/components/shell/Header";
+import { SearchDialog } from "@/components/search/SearchDialog";
 import { SmoothScroll } from "@/components/shell/SmoothScroll";
 import { site } from "@/data/site";
 import { I18nProvider } from "@/i18n/client";
@@ -68,6 +69,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
             </main>
             <Footer />
             <CartDrawer />
+            <SearchDialog />
             <Toast />
             <Cursor />
             <AppMounted />

@@ -2,6 +2,8 @@
 // overlay (the focus brackets have to land exactly on the hero print).
 // World units; the camera looks down -Z with a 50° vertical field of view.
 
+import type { FlightItem } from "./FlightScene";
+
 export const FOV = 50;
 const TAN = Math.tan((FOV / 2) * (Math.PI / 180));
 
@@ -10,6 +12,15 @@ export const visH = (d: number) => 2 * TAN * d;
 export const visW = (d: number, aspect: number) => visH(d) * aspect;
 
 export type Slot = { x: number; y: number; z: number; w: number; h: number };
+
+/** Device pixels across the stage; the canvas caps its pixel ratio at 1.6. */
+export const stagePixels = () => window.innerWidth * Math.min(Math.max(window.devicePixelRatio || 1, 1), 1.6);
+
+/** Below this many device pixels the 960 px derivatives are as sharp as the 1920 px ones. */
+const SMALL_STAGE = 1100;
+
+/** The file a print is drawn from on this screen. The DOM stage warms the hero up with the same rule. */
+export const sourceOf = (item: Pick<FlightItem, "url" | "urlSmall">, pixels: number) => (item.urlSmall && pixels <= SMALL_STAGE ? item.urlSmall : item.url);
 
 const GOLDEN = 2.399963;
 const FIRST = 8.5;

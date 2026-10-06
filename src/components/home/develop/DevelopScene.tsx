@@ -1,9 +1,9 @@
 "use client";
 
-import { useTexture } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Suspense, useMemo, useRef } from "react";
 import * as THREE from "three";
+import { usePlainTexture } from "../texture";
 
 /** Written by the DOM stage from scroll, read here every frame. */
 export type DevelopState = { dissolve: number; pixel: number };
@@ -84,7 +84,7 @@ const FRAG = /* glsl */ `
 `;
 
 function Print({ preview, clean, ratio, state }: { preview: string; clean: string; ratio: number; state: React.RefObject<DevelopState> }) {
-  const [a, b] = useTexture([preview, clean]);
+  const [a, b] = usePlainTexture([preview, clean]);
   const viewport = useThree((s) => s.viewport);
   const mesh = useRef<THREE.Mesh>(null);
 

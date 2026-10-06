@@ -1,12 +1,21 @@
 "use client";
 
-import { useProgress, useTexture } from "@react-three/drei";
+import { useProgress } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Suspense, useEffect, useMemo, useRef } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import { ARRIVE, cameraZ, finalSlot, FOV, heroSlot, smoothstep, tunnelSlots, type Slot } from "./layout";
+import { usePlainTexture } from "../texture";
+import { ARRIVE, cameraZ, finalSlot, FOV, heroSlot, smoothstep, sourceOf, tunnelSlots, type Slot } from "./layout";
 
-export type FlightItem = { id: string; url: string; ratio: number; palette: string[]; seq: number };
+export type FlightItem = {
+  id: string;
+  url: string;
+  /** A lighter derivative for small or low-density screens (the hero and the landing fill most of the frame). */
+  urlSmall?: string;
+  ratio: number;
+  palette: string[];
+  seq: number;
+};
 
 /** Mutable state written by the DOM stage (scroll, intro tweens) and read every frame here. */
 export type FlightState = { progress: number; velocity: number; pixel: number; heroIn: number; px: number; py: number };
@@ -17,6 +26,10 @@ type Props = {
   final: FlightItem;
   state: React.RefObject<FlightState>;
   active: boolean;
+  /** Device pixels across the stage, measured once by the DOM stage (see stagePixels). */
+  pixels: number;
+  /** The opening is over (or the visitor scrolls): time to put the rest of the archive on the GPU. */
+  stream: boolean;
   onReady: () => void;
   onLoad: (pct: number) => void;
   /** The print nearest to the camera changed: the page light follows it. */
@@ -63,11 +76,54 @@ const FRAG = /* glsl */ `
   }
 `;
 
-function Prints({ hero, items, final, state, onReady, onNear }: Omit<Props, "active" | "onLoad">) {
+type Uniforms = Record<"uMap" | "uOpacity" | "uShift" | "uPixel" | "uBend" | "uAspect" | "uDim", THREE.IUniform>;
+
+type PrintProps = { item: FlightItem; slot: Slot; pixels: number; index: number; register: (index: number, mesh: THREE.Mesh | null) => void; onLoaded?: () => void };
+
+/** One print. It suspends on its own texture, so a slow file never holds up the others. */
+function Print({ item, slot, pixels, index, register, onLoaded }: PrintProps) {
+  const [url] = useState(() => sourceOf(item, pixels));
+  const texture = usePlainTexture(url);
+  const uniforms = useMemo<Uniforms>(
+    () => ({
+      uMap: { value: texture },
+      uOpacity: { value: 0 },
+      uShift: { value: 0 },
+      uPixel: { value: 0 },
+      uBend: { value: 0 },
+      uAspect: { value: item.ratio },
+      uDim: { value: 1 },
+    }),
+    [texture, item.ratio],
+  );
+
+  useEffect(() => {
+    onLoaded?.();
+  }, [onLoaded]);
+
+  return (
+    <mesh
+      ref={(m) => register(index, m)}
+      position={[slot.x, slot.y, slot.z]}
+      scale={[slot.w, slot.h, 1]}
+    >
+      <planeGeometry args={[1, 1, 18, 1]} />
+      <shaderMaterial vertexShader={VERT} fragmentShader={FRAG} uniforms={uniforms} transparent depthWrite={false} depthTest={false} />
+    </mesh>
+  );
+}
+
+function Prints({ hero, items, final, state, pixels, stream, onReady, onNear }: Omit<Props, "active" | "onLoad">) {
   const all = useMemo(() => [hero, ...items, final], [hero, items, final]);
-  const textures = useTexture(all.map((i) => i.url));
   const size = useThree((s) => s.size);
   const aspect = size.width / size.height;
+  // The hero is all the opening needs: the rest of the archive follows once the shutter has opened,
+  // so seventeen texture uploads never compete with the opening animation.
+  const [heroIn, setHeroIn] = useState(false);
+  const heroLoaded = useCallback(() => {
+    setHeroIn(true);
+    onReady();
+  }, [onReady]);
 
   const { slots, camEnd } = useMemo(() => {
     const fin = finalSlot(items.length, final.ratio, aspect);
@@ -75,26 +131,11 @@ function Prints({ hero, items, final, state, onReady, onNear }: Omit<Props, "act
     return { slots: list, camEnd: fin.camEnd };
   }, [hero.ratio, items, final.ratio, aspect]);
 
-  const uniforms = useMemo(
-    () =>
-      all.map((item, i) => ({
-        uMap: { value: textures[i] },
-        uOpacity: { value: 0 },
-        uShift: { value: 0 },
-        uPixel: { value: 0 },
-        uBend: { value: 0 },
-        uAspect: { value: item.ratio },
-        uDim: { value: 1 },
-      })),
-    [all, textures],
-  );
-
   const meshes = useRef<(THREE.Mesh | null)[]>([]);
   const smooth = useRef({ v: 0, px: 0, py: 0, near: -1, tick: 0 });
-
-  useEffect(() => {
-    onReady();
-  }, [onReady]);
+  const register = useCallback((i: number, m: THREE.Mesh | null) => {
+    meshes.current[i] = m;
+  }, []);
 
   useFrame((three, dt) => {
     const st = state.current;
@@ -157,19 +198,13 @@ function Prints({ hero, items, final, state, onReady, onNear }: Omit<Props, "act
 
   return (
     <>
-      {slots.map((s, i) => (
-        <mesh
-          key={all[i].id + i}
-          ref={(m) => {
-            meshes.current[i] = m;
-          }}
-          position={[s.x, s.y, s.z]}
-          scale={[s.w, s.h, 1]}
-        >
-          <planeGeometry args={[1, 1, 18, 1]} />
-          <shaderMaterial vertexShader={VERT} fragmentShader={FRAG} uniforms={uniforms[i]} transparent depthWrite={false} depthTest={false} />
-        </mesh>
-      ))}
+      {slots.map((s, i) =>
+        i === 0 || (heroIn && stream) ? (
+          <Suspense key={all[i].id + i} fallback={null}>
+            <Print item={all[i]} slot={s} pixels={pixels} index={i} register={register} onLoaded={i === 0 ? heroLoaded : undefined} />
+          </Suspense>
+        ) : null,
+      )}
     </>
   );
 }

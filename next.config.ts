@@ -13,7 +13,11 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/media/:path*",
-        headers: [{ key: "X-Robots-Tag", value: "noimageindex" }],
+        headers: [
+          { key: "X-Robots-Tag", value: "noimageindex" },
+          // Derivatives keep their names: a day fresh, then revalidated in the background.
+          { key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" },
+        ],
       },
     ];
   },

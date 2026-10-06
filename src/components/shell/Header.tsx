@@ -1,9 +1,10 @@
 "use client";
 
-import { ArrowUpRightIcon, DownloadSimpleIcon, ListIcon, ShoppingBagIcon, XIcon } from "@phosphor-icons/react/dist/ssr";
+import { ArrowUpRightIcon, DownloadSimpleIcon, ListIcon, MagnifyingGlassIcon, ShoppingBagIcon, XIcon } from "@phosphor-icons/react/dist/ssr";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { loadSearchIndex } from "@/components/search/useSearchIndex";
 import { site } from "@/data/site";
 import { LLink, useI18n } from "@/i18n/client";
 import { stripLocale } from "@/i18n/config";
@@ -21,7 +22,7 @@ const NAV = [
 ] as const;
 
 export function Header() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const path = stripLocale(usePathname());
   const { scrollY } = useScroll();
   const [solid, setSolid] = useState(false);
@@ -65,6 +66,24 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              close();
+              ui.openSearch();
+            }}
+            // Fetch the index on intent, so the dialog opens with it in hand.
+            onPointerEnter={() => loadSearchIndex(locale).catch(() => {})}
+            onFocus={() => loadSearchIndex(locale).catch(() => {})}
+            aria-label={t.search.open}
+            aria-keyshortcuts="Control+K Meta+K /"
+            title={`${t.search.open} (/)`}
+            className="grid size-10 place-items-center rounded-full border border-line-2 text-paper transition-colors hover:bg-white/10 xl:flex xl:w-auto xl:gap-2 xl:pl-3.5 xl:pr-2"
+          >
+            <MagnifyingGlassIcon size={18} weight="bold" />
+            <span className="hidden text-[0.875rem] font-[620] text-paper-2 xl:inline">{t.search.open}</span>
+            <kbd className="t-hud hidden h-6 min-w-6 place-items-center rounded-full border border-line px-1.5 text-paper-3 xl:grid">/</kbd>
+          </button>
           <LangSwitch className="hidden sm:flex" />
           {myOrders.length > 0 && (
             <LLink

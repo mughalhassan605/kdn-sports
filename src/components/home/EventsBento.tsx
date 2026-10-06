@@ -29,7 +29,8 @@ export async function EventsBento() {
         <RevealBlock as="ul" className="mt-6 flex flex-wrap gap-2" y={18}>
           {sports.map((s) => (
             <li key={s} data-rv-item>
-              <LLink href={`/events?sport=${encodeURIComponent(s)}`} className="chip">
+              {/* No prefetch: the router's segment prefetch of a static page with a query, behind the locale rewrite, asks for a segment that does not exist (404). */}
+              <LLink href={`/events?sport=${encodeURIComponent(s)}`} prefetch={false} className="chip">
                 {s}
               </LLink>
             </li>
