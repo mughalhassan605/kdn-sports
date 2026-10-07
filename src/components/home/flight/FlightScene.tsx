@@ -222,7 +222,7 @@ function LoadReport({ onLoad }: { onLoad: (pct: number) => void }) {
 export default function FlightScene({ active, onLoad, ...rest }: Props) {
   return (
     <Canvas
-      className="!absolute inset-0"
+      className="!absolute inset-0 pointer-events-none"
       dpr={[1, 1.25]}
       camera={{ fov: FOV, near: 0.1, far: 60, position: [0, 0, 0] }}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}

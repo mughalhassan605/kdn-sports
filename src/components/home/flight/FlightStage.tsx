@@ -8,7 +8,7 @@ import { site } from "@/data/site";
 import { LLink, useI18n } from "@/i18n/client";
 import { ambient } from "@/lib/ambient";
 import { gsap, SplitText, useGSAP } from "@/lib/gsap";
-import { useIsDesktop, useLiteMode, usePrefersReducedMotion, useWebGL } from "@/lib/store";
+import { useLiteMode, usePrefersReducedMotion, useWebGL } from "@/lib/store";
 import type { FlightItem, FlightState } from "./FlightScene";
 import { heroRect, sourceOf, stagePixels } from "./layout";
 
@@ -69,8 +69,7 @@ export function FlightStage({ hero, items, final, landing, fallback }: Props) {
   const reduce = usePrefersReducedMotion();
   const webgl = useWebGL();
   const lite = useLiteMode();
-  const isDesktop = useIsDesktop();
-  const still = reduce || !webgl || lite || !isDesktop;
+  const still = reduce || !webgl || lite;
 
   const root = useRef<HTMLElement>(null);
   const fx = useRef<FlightState>({ progress: 0, velocity: 0, pixel: 1, heroIn: 0, px: 0, py: 0 });
@@ -78,11 +77,23 @@ export function FlightStage({ hero, items, final, landing, fallback }: Props) {
   // The scene can report before the fonts are ready and the timeline exists: remember it.
   const pending = useRef({ pct: 0, ready: false });
   const [active, setActive] = useState(true);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!still);
   const [stream, setStream] = useState(false);
   const pixels = useSyncExternalStore(noop, measurePixels, () => 0);
 
-  useScrollLock(loading);
+  useScrollLock(!still && loading);
+
+  // Safety unlock: guarantees scroll is never permanently locked
+  useEffect(() => {
+    if (still) {
+      setLoading(false);
+      return;
+    }
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [still]);
 
   // Start the hero download while three.js is still on its way; the scene then finds it in the cache.
   useEffect(() => {

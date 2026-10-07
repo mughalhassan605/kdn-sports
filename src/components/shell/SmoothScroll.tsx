@@ -38,9 +38,16 @@ function Bridge() {
 export function useScrollLock(active: boolean) {
   const lenis = useLenis();
   useEffect(() => {
-    if (!active || !lenis) return;
+    if (!active || !lenis) {
+      if (lenis) lenis.start();
+      document.documentElement.classList.remove("lenis-stopped");
+      return;
+    }
     lenis.stop();
-    return () => lenis.start();
+    return () => {
+      lenis.start();
+      document.documentElement.classList.remove("lenis-stopped");
+    };
   }, [active, lenis]);
 }
 
