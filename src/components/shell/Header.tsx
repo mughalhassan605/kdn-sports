@@ -16,6 +16,7 @@ import { useScrollLock } from "./SmoothScroll";
 
 const NAV = [
   { href: "/events", key: "events" },
+  { href: "/store", key: "store" },
   { href: "/clips", key: "clips" },
   { href: "/preise", key: "pricing" },
   { href: "/veranstalter", key: "organisers" },

@@ -1,11 +1,13 @@
 "use client";
 
 import { ArrowRightIcon, CheckIcon, DownloadSimpleIcon, FlagIcon, PlusIcon } from "@phosphor-icons/react/dist/ssr";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { frameNo, src, type Media } from "@/data/media";
 import { defaultFormat, formatsFor, PRICES, type Format, type License } from "@/data/pricing";
 import { site } from "@/data/site";
 import { LLink, useI18n } from "@/i18n/client";
+import { localePath } from "@/i18n/config";
 import { cn } from "@/lib/cn";
 import { aspectLabel, clock, dateLong, duration, money } from "@/lib/format";
 import { cart, ui, useCart } from "@/lib/store";
@@ -13,6 +15,7 @@ import { cart, ui, useCart } from "@/lib/store";
 /** Licence, format, price, cart. Everything a buyer decides, in the order they decide it. */
 export function BuyPanel({ m, eventTitle }: { m: Media; eventTitle: string }) {
   const { t, locale } = useI18n();
+  const router = useRouter();
   const { line } = useCart();
   const inCart = line(m.id);
   const [license, setLicense] = useState<License>("personal");
@@ -109,17 +112,30 @@ export function BuyPanel({ m, eventTitle }: { m: Media; eventTitle: string }) {
             </LLink>
           </>
         ) : (
-          <button
-            type="button"
-            onClick={() => {
-              cart.add({ id: m.id, license: curLicense, format: curFormat });
-              ui.toast(t.cart.added);
-            }}
-            className="btn btn-glow w-full"
-          >
-            <PlusIcon size={16} weight="bold" />
-            {t.detail.add}
-          </button>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                cart.add({ id: m.id, license: curLicense, format: curFormat });
+                ui.toast(t.cart.added);
+              }}
+              className="btn btn-line w-full"
+            >
+              <PlusIcon size={16} weight="bold" />
+              {t.detail.add}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                cart.add({ id: m.id, license: curLicense, format: curFormat });
+                router.push(localePath(locale, "/kasse"));
+              }}
+              className="btn btn-glow w-full"
+            >
+              {t.checkout.pay}
+              <ArrowRightIcon size={16} weight="bold" />
+            </button>
+          </div>
         )}
         <a href={m.type === "clip" ? src.video(m.id) : src.preview(m.id)} download={`kdn-vorschau-${m.id}`} className="btn btn-line w-full">
           <DownloadSimpleIcon size={16} weight="bold" />

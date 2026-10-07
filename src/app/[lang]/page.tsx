@@ -8,6 +8,7 @@ import { FlightStage } from "@/components/home/flight/FlightStage";
 import { Hero } from "@/components/home/Hero";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { Manifesto } from "@/components/home/Manifesto";
+import { MediaFinderSection } from "@/components/home/MediaFinderSection";
 import { OrganisersBand } from "@/components/home/OrganisersBand";
 import { PricingBoard } from "@/components/home/PricingBoard";
 import { SearchSection } from "@/components/home/SearchSection";
@@ -82,6 +83,7 @@ export default async function Home() {
         fallback={<HowItWorks />}
       />
       <Strip />
+      <MediaFinderSection />
       <ClipsShowcase />
       <Manifesto />
       <AmbientZone as="section" palette={mustMedia("sl-001").palette} level={0.26} className="sec">
