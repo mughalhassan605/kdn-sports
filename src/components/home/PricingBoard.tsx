@@ -29,7 +29,7 @@ export function PricingBoard({ withLink = true }: { withLink?: boolean }) {
   return (
     <div className="grid gap-10 lg:grid-cols-12 lg:gap-8">
       <div className="lg:col-span-5">
-        <RevealText as="h2" className="t-h2 max-w-[13ch]">
+        <RevealText as="h2" className="t-h2 max-w-[15ch]">
           {t.pricing.title}
         </RevealText>
         <div role="group" aria-label={t.detail.license} className="mt-8 inline-flex rounded-full border border-line-2 p-1">

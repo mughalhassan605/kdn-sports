@@ -107,8 +107,8 @@ export function useOrders() {
 
 // ------------------------------------------------------------------------ ui
 
-type Ui = { cartOpen: boolean; toast: { id: number; text: string } | null };
-const UI: Ui = { cartOpen: false, toast: null };
+type Ui = { cartOpen: boolean; searchOpen: boolean; toast: { id: number; text: string } | null };
+const UI: Ui = { cartOpen: false, searchOpen: false, toast: null };
 const uiStore = createStore<Ui>(UI);
 let toastId = 0;
 let toastTimer: ReturnType<typeof setTimeout> | undefined;
@@ -116,6 +116,8 @@ let toastTimer: ReturnType<typeof setTimeout> | undefined;
 export const ui = {
   openCart: () => uiStore.set({ ...uiStore.get(), cartOpen: true, toast: null }),
   closeCart: () => uiStore.set({ ...uiStore.get(), cartOpen: false }),
+  openSearch: () => uiStore.set({ ...uiStore.get(), searchOpen: true, cartOpen: false, toast: null }),
+  closeSearch: () => uiStore.set({ ...uiStore.get(), searchOpen: false }),
   toast(text: string) {
     clearTimeout(toastTimer);
     uiStore.set({ ...uiStore.get(), toast: { id: ++toastId, text } });
@@ -167,3 +169,23 @@ function detectWebGL() {
 
 /** True on the server and until proven otherwise, so the WebGL stage is the default render. */
 export const useWebGL = () => useSyncExternalStore(noop, detectWebGL, () => true);
+
+// -------------------------------------------------------------- lite mode
+
+type NetworkInfo = { saveData?: boolean; effectiveType?: string };
+let liteMode: boolean | null = null;
+
+function detectLite() {
+  if (liteMode !== null) return liteMode;
+  const nav = navigator as Navigator & { connection?: NetworkInfo; deviceMemory?: number };
+  const net = nav.connection;
+  liteMode = Boolean(net?.saveData || /2g|3g/.test(net?.effectiveType ?? "") || (nav.deviceMemory !== undefined && nav.deviceMemory < 4));
+  return liteMode;
+}
+
+/**
+ * True when the visitor asked to save data, is on a slow connection or on a
+ * low-memory phone: the WebGL stages then give way to their static versions
+ * and three.js is never downloaded. False on the server and during hydration.
+ */
+export const useLiteMode = () => useSyncExternalStore(noop, detectLite, () => false);

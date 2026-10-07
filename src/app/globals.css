@@ -306,6 +306,10 @@
     mix-blend-mode: overlay;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
+  /* A blended full-screen layer costs every scrolled frame on a phone, where the grain is barely visible anyway. */
+  @media (pointer: coarse) {
+    .grain { display: none; }
+  }
 
   /* Light spilling out of a frame: its own palette, blurred, behind it. */
   .spill { position: relative; isolation: isolate; }
@@ -498,9 +502,10 @@ html[data-js="1"] .ld { display: block; }
 
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 260ms; }
 
-/* Route change: the old page sinks back, the new one rises through a closing shutter. */
-::view-transition-old(.page-out) { animation: 420ms cubic-bezier(0.76, 0, 0.24, 1) both page-out; }
-::view-transition-new(.page-in) { animation: 900ms cubic-bezier(0.16, 1, 0.3, 1) 180ms both page-in; }
+/* Route change: the old page sinks back, the new one rises through a closing shutter.
+   Kept short: the page is interactive again after about half a second. */
+::view-transition-old(.page-out) { animation: 240ms cubic-bezier(0.76, 0, 0.24, 1) both page-out; }
+::view-transition-new(.page-in) { animation: 520ms cubic-bezier(0.16, 1, 0.3, 1) 60ms both page-in; }
 @keyframes page-out { to { opacity: 0; transform: translate3d(0, -40px, 0) scale(0.985); filter: blur(4px); } }
 @keyframes page-in {
   from { clip-path: inset(100% 0 0 0); transform: translate3d(0, 60px, 0); }

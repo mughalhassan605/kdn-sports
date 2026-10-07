@@ -62,11 +62,11 @@ export function ZoomLines({ lines, className, delay = 0 }: { lines: string[]; cl
 /** The footer wordmark: its width follows the scroll until it fills the measure. */
 export function ZoomWord({ text, className }: { text: string; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end end"] });
   const stretch = useTransform(scrollYProgress, [0, 1], ["62%", "125%"]);
+  // Reduced motion is settled in CSS: a JS branch here would render differently on server and client.
   return (
-    <motion.div ref={ref} aria-hidden style={{ fontStretch: reduce ? "125%" : stretch }} className={className}>
+    <motion.div ref={ref} aria-hidden style={{ fontStretch: stretch }} className={cn("motion-reduce:![font-stretch:125%]", className)}>
       {text}
     </motion.div>
   );

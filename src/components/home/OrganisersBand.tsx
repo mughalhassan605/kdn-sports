@@ -21,7 +21,7 @@ export async function OrganisersBand() {
           <Window className="absolute inset-0" shift={8}>
             <Shot m={m} variant="clean" sizes="(min-width: 97.5rem) 1464px, 94vw" alt="" />
           </Window>
-          <span className="absolute inset-0 bg-gradient-to-t from-ink-0 via-ink-0/70 to-ink-0/10 lg:bg-gradient-to-r lg:from-ink-0/95 lg:via-ink-0/70 lg:to-transparent" aria-hidden />
+          <span className="absolute inset-0 bg-gradient-to-t from-ink-0 via-ink-0/80 to-ink-0/45 lg:bg-gradient-to-r lg:from-ink-0/95 lg:via-ink-0/70 lg:to-transparent" aria-hidden />
 
           <div className="relative z-[3] w-full max-w-[700px] p-5 md:p-10 lg:p-14">
             <RevealText as="h2" by="chars" start="top 70%" className="t-h2">

@@ -3,13 +3,13 @@
 
 import { DownloadSimpleIcon, LockSimpleIcon, LockSimpleOpenIcon } from "@phosphor-icons/react/dist/ssr";
 import dynamic from "next/dynamic";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { paymentMethods } from "@/data/site";
 import { useI18n } from "@/i18n/client";
 import { ambient } from "@/lib/ambient";
 import { cn } from "@/lib/cn";
 import { gsap, ScrollTrigger, SplitText, useGSAP } from "@/lib/gsap";
-import { usePrefersReducedMotion, useWebGL } from "@/lib/store";
+import { useLiteMode, usePrefersReducedMotion, useWebGL } from "@/lib/store";
 import type { DevelopState } from "./DevelopScene";
 
 const DevelopScene = dynamic(() => import("./DevelopScene"), { ssr: false });
@@ -33,11 +33,23 @@ export function DevelopStage({ preview, clean, ratio, palette, fallback }: Props
   const { t } = useI18n();
   const reduce = usePrefersReducedMotion();
   const webgl = useWebGL();
+  const lite = useLiteMode();
+  const still = reduce || !webgl || lite;
   const root = useRef<HTMLElement>(null);
   const fx = useRef<DevelopState>({ dissolve: 0, pixel: 0.9 });
   const step = useRef(0);
   const [active, setActive] = useState(false);
+  // The shader (and its two textures) only loads once the scene is a screen away, not with the page.
+  const [near, setNear] = useState(false);
   const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const el = root.current;
+    if (!el || near) return;
+    const io = new IntersectionObserver(([e]) => e.isIntersecting && setNear(true), { rootMargin: "100% 0px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [still, near]);
 
   useGSAP(
     () => {
@@ -116,10 +128,10 @@ export function DevelopStage({ preview, clean, ratio, palette, fallback }: Props
 
       return () => title.revert();
     },
-    { scope: root, dependencies: [reduce, webgl, palette.join()], revertOnUpdate: true },
+    { scope: root, dependencies: [still, palette.join()], revertOnUpdate: true },
   );
 
-  if (reduce || !webgl) return <>{fallback}</>;
+  if (still) return <>{fallback}</>;
 
   return (
     <section ref={root} data-rv id="ablauf" className="relative h-[250svh] scroll-mt-0">
@@ -153,8 +165,8 @@ export function DevelopStage({ preview, clean, ratio, palette, fallback }: Props
             <div className="relative mx-auto w-full max-w-[min(100%,calc((100svh-21rem)*var(--ratio)))] lg:max-w-[min(100%,calc((100svh-11rem)*var(--ratio)))]" style={{ aspectRatio: ratio, "--ratio": ratio } as React.CSSProperties}>
               <div className="dv-frame absolute inset-0 overflow-hidden rounded-media bg-ink-2">
                 {/* Until the shader has its textures, the preview is simply there. */}
-                <img src={preview} alt="" className="absolute inset-0 size-full object-cover" decoding="async" />
-                <DevelopScene preview={preview} clean={clean} ratio={ratio} state={fx} active={active} />
+                <img src={preview} alt="" className="absolute inset-0 size-full object-cover" loading="lazy" decoding="async" />
+                {near && <DevelopScene preview={preview} clean={clean} ratio={ratio} state={fx} active={active} />}
               </div>
 
               {/* focus brackets, outside the print */}

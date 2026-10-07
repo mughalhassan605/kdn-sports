@@ -2,17 +2,46 @@
 
 import { ArrowRightIcon, ArrowUpRightIcon } from "@phosphor-icons/react/dist/ssr";
 import dynamic from "next/dynamic";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useScrollLock } from "@/components/shell/SmoothScroll";
 import { site } from "@/data/site";
 import { LLink, useI18n } from "@/i18n/client";
 import { ambient } from "@/lib/ambient";
 import { gsap, SplitText, useGSAP } from "@/lib/gsap";
-import { usePrefersReducedMotion, useWebGL } from "@/lib/store";
+import { useLiteMode, usePrefersReducedMotion, useWebGL } from "@/lib/store";
 import type { FlightItem, FlightState } from "./FlightScene";
-import { heroRect } from "./layout";
+import { heroRect, sourceOf, stagePixels } from "./layout";
 
 const FlightScene = dynamic(() => import("./FlightScene"), { ssr: false });
+
+// The full loader (counter, shutter) plays once per tab. Coming back to the
+// home page later only opens the shutter as soon as the hero print is there.
+const INTRO_KEY = "kdn.intro.v1";
+let introSeen = false;
+
+function hasSeenIntro() {
+  if (introSeen) return true;
+  try {
+    introSeen = window.sessionStorage.getItem(INTRO_KEY) === "1";
+  } catch {
+    /* storage blocked: play the full intro */
+  }
+  return introSeen;
+}
+
+function markIntroSeen() {
+  introSeen = true;
+  try {
+    window.sessionStorage.setItem(INTRO_KEY, "1");
+  } catch {
+    /* storage blocked: the module flag still covers this visit */
+  }
+}
+
+// Measured once per page load: a resize re-lays the prints but never swaps their files.
+let measured = 0;
+const measurePixels = () => measured || (measured = stagePixels());
+const noop = () => () => {};
 
 type Props = {
   hero: FlightItem;
@@ -39,6 +68,8 @@ export function FlightStage({ hero, items, final, landing, fallback }: Props) {
   const { t } = useI18n();
   const reduce = usePrefersReducedMotion();
   const webgl = useWebGL();
+  const lite = useLiteMode();
+  const still = reduce || !webgl || lite;
 
   const root = useRef<HTMLElement>(null);
   const fx = useRef<FlightState>({ progress: 0, velocity: 0, pixel: 1, heroIn: 0, px: 0, py: 0 });
@@ -47,8 +78,17 @@ export function FlightStage({ hero, items, final, landing, fallback }: Props) {
   const pending = useRef({ pct: 0, ready: false });
   const [active, setActive] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [stream, setStream] = useState(false);
+  const pixels = useSyncExternalStore(noop, measurePixels, () => 0);
 
   useScrollLock(loading);
+
+  // Start the hero download while three.js is still on its way; the scene then finds it in the cache.
+  useEffect(() => {
+    if (still || !pixels) return;
+    const warm = new Image();
+    warm.src = sourceOf(hero, pixels);
+  }, [still, pixels, hero]);
 
   const onLoad = useCallback((pct: number) => {
     pending.current.pct = pct;
@@ -57,7 +97,12 @@ export function FlightStage({ hero, items, final, landing, fallback }: Props) {
   const onReady = useCallback(() => {
     pending.current.ready = true;
     api.current?.ready();
-  }, []);
+    // Download the rest of the archive now; it goes on the GPU once the opening is over.
+    for (const item of [...items, final]) {
+      const warm = new Image();
+      warm.src = sourceOf(item, measurePixels());
+    }
+  }, [items, final]);
   const onNear = useCallback((item: FlightItem) => ambient.base(item.palette, 0.38), []);
 
   useGSAP(
@@ -131,6 +176,7 @@ export function FlightStage({ hero, items, final, landing, fallback }: Props) {
               onUpdate: (self) => {
                 state.progress = self.progress;
                 state.velocity = self.getVelocity();
+                if (self.progress > 0.002) setStream(true);
               },
               onToggle: (self) => setActive(self.isActive),
             },
@@ -155,7 +201,9 @@ export function FlightStage({ hero, items, final, landing, fallback }: Props) {
 
           const arrive = (instant: boolean) => {
             setLoading(false);
+            markIntroSeen();
             if (instant) {
+              setStream(true);
               gsap.set(q(".ld"), { autoAlpha: 0 });
               gsap.set(state, { pixel: 0, heroIn: 1 });
               gsap.set(q(".fl-box-in"), { autoAlpha: 1, scale: 1 });
@@ -165,22 +213,26 @@ export function FlightStage({ hero, items, final, landing, fallback }: Props) {
             gsap.set(box, { autoAlpha: 1 });
             gsap
               .timeline()
-              .to(q(".ld-count"), { yPercent: -120, duration: 0.6, ease: "expo.in" })
-              .to(q(".ld-mark"), { scale: 0.6, autoAlpha: 0, duration: 0.45, ease: "expo.in" }, "<")
-              .to(q(".ld-note"), { autoAlpha: 0, duration: 0.3 }, "<")
-              .to(q(".ld-top"), { yPercent: -101, duration: 1.05, ease: "expo.inOut" }, "-=0.2")
-              .to(q(".ld-bot"), { yPercent: 101, duration: 1.05, ease: "expo.inOut" }, "<")
+              .to(q(".ld-count"), { yPercent: -120, duration: 0.45, ease: "expo.in" })
+              .to(q(".ld-mark"), { scale: 0.6, autoAlpha: 0, duration: 0.35, ease: "expo.in" }, "<")
+              .to(q(".ld-note"), { autoAlpha: 0, duration: 0.25 }, "<")
+              .to(q(".ld-top"), { yPercent: -101, duration: 0.9, ease: "expo.inOut" }, "-=0.2")
+              .to(q(".ld-bot"), { yPercent: 101, duration: 0.9, ease: "expo.inOut" }, "<")
               .set(q(".ld"), { autoAlpha: 0 })
               .to(state, { heroIn: 1, duration: 0.7, ease: "power2.out" }, "-=1")
               .to(state, { pixel: 0, duration: 2.1, ease: "expo.out" }, "<0.15")
               .fromTo(h1, { fontStretch: "62%" }, { fontStretch: stretch, duration: 1.4, ease: "expo.out" }, "<0.1")
               .from(heroSplit.chars, { yPercent: 120, stagger: 0.02, duration: 1.1, ease: "expo.out" }, "<")
               .fromTo(q(".fl-box-in"), { scale: 0.2, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 1.3, ease: "expo.inOut" }, "<0.1")
-              .from(q(".fl-rise"), { y: 34, autoAlpha: 0, stagger: 0.09, duration: 1.05, ease: "expo.out" }, "<0.4");
+              .from(q(".fl-rise"), { y: 34, autoAlpha: 0, stagger: 0.09, duration: 1.05, ease: "expo.out" }, "<0.4")
+              .call(() => setStream(true));
           };
 
           // A reload that restores a scroll position mid-page skips the loader.
           const skip = window.scrollY > 40;
+          // Seen it already in this tab: no counter, just the shutter once the hero is there.
+          const brief = hasSeenIntro();
+          if (brief) gsap.set(q(".ld-count, .ld-mark, .ld-note"), { autoAlpha: 0 });
           const counter = { v: 0 };
           const countEl = q(".ld-num")[0];
           let done = skip;
@@ -203,24 +255,30 @@ export function FlightStage({ hero, items, final, landing, fallback }: Props) {
               },
             });
 
+          const finish = () => {
+            if (done) return;
+            if (brief) {
+              done = true;
+              arrive(false);
+            } else aim(100, 0.35);
+          };
+
           api.current = {
             load: (pct) => {
-              if (!done && !sceneReady) aim(16 + pct * 0.7);
+              if (!brief && !done && !sceneReady) aim(16 + pct * 0.7);
             },
             ready: () => {
               sceneReady = true;
-              if (!done) aim(100, 0.7);
+              finish();
             },
           };
 
           if (skip) arrive(true);
-          else if (pending.current.ready) aim(100, 0.9);
-          else aim(16 + pending.current.pct * 0.7, 1.4);
+          else if (pending.current.ready) finish();
+          else if (!brief) aim(16 + pending.current.pct * 0.7, 0.9);
 
           // Never trap a visitor behind the loader if WebGL stalls.
-          gsap.delayedCall(8, () => {
-            if (!done) aim(100, 0.5);
-          });
+          gsap.delayedCall(brief ? 2.5 : 5, finish);
 
           cleanup = () => {
             window.removeEventListener("pointermove", onMove);
@@ -239,15 +297,17 @@ export function FlightStage({ hero, items, final, landing, fallback }: Props) {
         cleanup();
       };
     },
-    { scope: root, dependencies: [reduce, webgl], revertOnUpdate: true },
+    { scope: root, dependencies: [still], revertOnUpdate: true },
   );
 
-  if (reduce || !webgl) return <>{fallback}</>;
+  if (still) return <>{fallback}</>;
 
   return (
     <section ref={root} data-rv className="relative h-[300svh] md:h-[330svh]" aria-label={site.name}>
       <div className="fl-stage sticky top-0 h-[100svh] overflow-hidden">
-        <FlightScene hero={hero} items={items} final={final} state={fx} active={active} onLoad={onLoad} onReady={onReady} onNear={onNear} />
+        {pixels > 0 && (
+          <FlightScene hero={hero} items={items} final={final} state={fx} active={active} pixels={pixels} stream={stream} onLoad={onLoad} onReady={onReady} onNear={onNear} />
+        )}
 
         {/* A soft floor of shade so type stays readable over any print. */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-0/85 via-transparent to-ink-0/40" aria-hidden />

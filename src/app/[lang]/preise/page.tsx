@@ -62,7 +62,7 @@ export default async function PricingPage() {
         </RevealBlock>
       </section>
 
-      <section className="sec">
+      <section id="faq" className="sec scroll-mt-16">
         <div className="wrap">
           <Faq />
         </div>

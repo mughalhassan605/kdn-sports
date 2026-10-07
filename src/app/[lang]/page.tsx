@@ -10,6 +10,7 @@ import { HowItWorks } from "@/components/home/HowItWorks";
 import { Manifesto } from "@/components/home/Manifesto";
 import { OrganisersBand } from "@/components/home/OrganisersBand";
 import { PricingBoard } from "@/components/home/PricingBoard";
+import { SearchSection } from "@/components/home/SearchSection";
 import { Strip } from "@/components/home/Strip";
 import { TrustBand } from "@/components/home/TrustBand";
 import { AmbientZone } from "@/components/shell/Ambient";
@@ -34,6 +35,7 @@ const flightItem = (m: Media): FlightItem => ({
 
 // The home page (see docs/DIRECTION.md):
 //   opening   loader, arrival, archive flight, landing     FlightStage (WebGL, pinned)
+//   search    find an event, a photo or an answer          SearchSection
 //   galleries                                              EventsBento
 //   develop   the product, scrubbed by the scroll          DevelopStage (WebGL, pinned)
 //   then film strip + clips, statement, prices, organisers, trust, questions, close.
@@ -51,15 +53,17 @@ export default async function Home() {
     .flat()
     .filter((m): m is Media => Boolean(m) && m.id !== hero.id && m.id !== final.id);
 
+  const quick = [...new Set([...events.map((e) => e.sport[locale]), ...events.map((e) => e.city)])];
+
   const tunnel = mixed.slice(0, 16);
   const wall = mixed.slice(0, 24).map((m) => ({ id: m.id, avg: m.avg }));
 
   return (
     <>
       <FlightStage
-        hero={{ ...flightItem(hero), url: src.clean(hero.id) }}
+        hero={{ ...flightItem(hero), url: src.clean(hero.id), urlSmall: src.cleanM(hero.id) }}
         items={tunnel.map(flightItem)}
-        final={{ ...flightItem(final), url: src.clean(final.id) }}
+        final={{ ...flightItem(final), url: src.clean(final.id), urlSmall: src.cleanM(final.id) }}
         landing={{
           title: featured.title,
           meta: `${featured.sport[locale]} / ${featured.city} / ${dateLong(featured.date, locale)}`,
@@ -67,6 +71,7 @@ export default async function Home() {
         }}
         fallback={<Hero />}
       />
+      <SearchSection quick={quick} />
       <EventsBento />
       <DevelopStage
         preview={src.preview(develop.id)}
