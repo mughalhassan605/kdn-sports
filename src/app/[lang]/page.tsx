@@ -27,7 +27,8 @@ const DEVELOP = "hc-001";
 const flightItem = (m: Media): FlightItem => ({
   id: m.id,
   // Marketing picks fly clean; everything else flies as its marked thumbnail.
-  url: m.clean ? src.cleanM(m.id) : src.thumb2(m.id),
+  url: m.clean ? src.cleanM(m.id) : src.thumb(m.id),
+  urlSmall: src.thumb(m.id),
   ratio: m.w / m.h,
   palette: m.palette,
   seq: m.seq,
@@ -55,7 +56,7 @@ export default async function Home() {
 
   const quick = [...new Set([...events.map((e) => e.sport[locale]), ...events.map((e) => e.city)])];
 
-  const tunnel = mixed.slice(0, 16);
+  const tunnel = mixed.slice(0, 10);
   const wall = mixed.slice(0, 24).map((m) => ({ id: m.id, avg: m.avg }));
 
   return (

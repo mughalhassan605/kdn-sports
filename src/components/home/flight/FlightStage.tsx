@@ -8,7 +8,7 @@ import { site } from "@/data/site";
 import { LLink, useI18n } from "@/i18n/client";
 import { ambient } from "@/lib/ambient";
 import { gsap, SplitText, useGSAP } from "@/lib/gsap";
-import { useLiteMode, usePrefersReducedMotion, useWebGL } from "@/lib/store";
+import { useIsDesktop, useLiteMode, usePrefersReducedMotion, useWebGL } from "@/lib/store";
 import type { FlightItem, FlightState } from "./FlightScene";
 import { heroRect, sourceOf, stagePixels } from "./layout";
 
@@ -69,7 +69,8 @@ export function FlightStage({ hero, items, final, landing, fallback }: Props) {
   const reduce = usePrefersReducedMotion();
   const webgl = useWebGL();
   const lite = useLiteMode();
-  const still = reduce || !webgl || lite;
+  const isDesktop = useIsDesktop();
+  const still = reduce || !webgl || lite || !isDesktop;
 
   const root = useRef<HTMLElement>(null);
   const fx = useRef<FlightState>({ progress: 0, velocity: 0, pixel: 1, heroIn: 0, px: 0, py: 0 });
@@ -213,18 +214,18 @@ export function FlightStage({ hero, items, final, landing, fallback }: Props) {
             gsap.set(box, { autoAlpha: 1 });
             gsap
               .timeline()
-              .to(q(".ld-count"), { yPercent: -120, duration: 0.45, ease: "expo.in" })
-              .to(q(".ld-mark"), { scale: 0.6, autoAlpha: 0, duration: 0.35, ease: "expo.in" }, "<")
-              .to(q(".ld-note"), { autoAlpha: 0, duration: 0.25 }, "<")
-              .to(q(".ld-top"), { yPercent: -101, duration: 0.9, ease: "expo.inOut" }, "-=0.2")
-              .to(q(".ld-bot"), { yPercent: 101, duration: 0.9, ease: "expo.inOut" }, "<")
+              .to(q(".ld-count"), { yPercent: -120, duration: 0.35, ease: "expo.in" })
+              .to(q(".ld-mark"), { scale: 0.6, autoAlpha: 0, duration: 0.25, ease: "expo.in" }, "<")
+              .to(q(".ld-note"), { autoAlpha: 0, duration: 0.2 }, "<")
+              .to(q(".ld-top"), { yPercent: -101, duration: 0.55, ease: "expo.inOut" }, "-=0.15")
+              .to(q(".ld-bot"), { yPercent: 101, duration: 0.55, ease: "expo.inOut" }, "<")
               .set(q(".ld"), { autoAlpha: 0 })
-              .to(state, { heroIn: 1, duration: 0.7, ease: "power2.out" }, "-=1")
-              .to(state, { pixel: 0, duration: 2.1, ease: "expo.out" }, "<0.15")
-              .fromTo(h1, { fontStretch: "62%" }, { fontStretch: stretch, duration: 1.4, ease: "expo.out" }, "<0.1")
-              .from(heroSplit.chars, { yPercent: 120, stagger: 0.02, duration: 1.1, ease: "expo.out" }, "<")
-              .fromTo(q(".fl-box-in"), { scale: 0.2, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 1.3, ease: "expo.inOut" }, "<0.1")
-              .from(q(".fl-rise"), { y: 34, autoAlpha: 0, stagger: 0.09, duration: 1.05, ease: "expo.out" }, "<0.4")
+              .to(state, { heroIn: 1, duration: 0.5, ease: "power2.out" }, "-=0.5")
+              .to(state, { pixel: 0, duration: 1.2, ease: "expo.out" }, "<0.1")
+              .fromTo(h1, { fontStretch: "62%" }, { fontStretch: stretch, duration: 0.9, ease: "expo.out" }, "<0.1")
+              .from(heroSplit.chars, { yPercent: 120, stagger: 0.015, duration: 0.8, ease: "expo.out" }, "<")
+              .fromTo(q(".fl-box-in"), { scale: 0.2, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.8, ease: "expo.inOut" }, "<0.1")
+              .from(q(".fl-rise"), { y: 34, autoAlpha: 0, stagger: 0.05, duration: 0.7, ease: "expo.out" }, "<0.2")
               .call(() => setStream(true));
           };
 
@@ -238,7 +239,7 @@ export function FlightStage({ hero, items, final, landing, fallback }: Props) {
           let done = skip;
           let sceneReady = false;
 
-          const aim = (target: number, duration = 0.9) =>
+          const aim = (target: number, duration = 0.4) =>
             gsap.to(counter, {
               v: target,
               duration,
@@ -260,12 +261,12 @@ export function FlightStage({ hero, items, final, landing, fallback }: Props) {
             if (brief) {
               done = true;
               arrive(false);
-            } else aim(100, 0.35);
+            } else aim(100, 0.25);
           };
 
           api.current = {
             load: (pct) => {
-              if (!brief && !done && !sceneReady) aim(16 + pct * 0.7);
+              if (!brief && !done && !sceneReady) aim(Math.min(100, 25 + pct * 0.75), 0.3);
             },
             ready: () => {
               sceneReady = true;
@@ -275,10 +276,10 @@ export function FlightStage({ hero, items, final, landing, fallback }: Props) {
 
           if (skip) arrive(true);
           else if (pending.current.ready) finish();
-          else if (!brief) aim(16 + pending.current.pct * 0.7, 0.9);
+          else if (!brief) aim(75, 0.4);
 
-          // Never trap a visitor behind the loader if WebGL stalls.
-          gsap.delayedCall(brief ? 2.5 : 5, finish);
+          // Never trap a visitor behind the loader: open in 1.2s max!
+          gsap.delayedCall(brief ? 0.8 : 1.2, finish);
 
           cleanup = () => {
             window.removeEventListener("pointermove", onMove);

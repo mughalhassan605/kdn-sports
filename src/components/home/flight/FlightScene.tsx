@@ -223,7 +223,7 @@ export default function FlightScene({ active, onLoad, ...rest }: Props) {
   return (
     <Canvas
       className="!absolute inset-0"
-      dpr={[1, 1.6]}
+      dpr={[1, 1.25]}
       camera={{ fov: FOV, near: 0.1, far: 60, position: [0, 0, 0] }}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       frameloop={active ? "always" : "never"}

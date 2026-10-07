@@ -144,9 +144,11 @@ function mediaStore(query: string) {
 
 const finePointer = mediaStore("(hover: hover) and (pointer: fine)");
 const reducedMotion = mediaStore("(prefers-reduced-motion: reduce)");
+const desktop = mediaStore("(min-width: 768px)");
 
 export const useFinePointer = () => useSyncExternalStore(finePointer.subscribe, finePointer.get, () => false);
 export const usePrefersReducedMotion = () => useSyncExternalStore(reducedMotion.subscribe, reducedMotion.get, () => false);
+export const useIsDesktop = () => useSyncExternalStore(desktop.subscribe, desktop.get, () => true);
 
 const noop = () => () => {};
 /** False during server render and hydration, true afterwards. */
